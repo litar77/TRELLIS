@@ -327,7 +327,8 @@ def bake_texture(
                 mask = rast['mask'][0].detach().bool() & masks[0]
             
             # nearest neighbor interpolation
-            uv_map = (uv_map * texture_size).floor().long()
+            # Fix: use (texture_size - 1) to avoid index out of bounds when uv=1.0
+            uv_map = (uv_map * (texture_size - 1)).floor().long()
             obs = observation[mask]
             uv_map = uv_map[mask]
             idx = uv_map[:, 0] + (texture_size - uv_map[:, 1] - 1) * texture_size
